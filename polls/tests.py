@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 import datetime
+from django.http import response
+from django.urls.base import reverse
 from django.utils import timezone
 from django.test import TestCase
 from .models import Question
@@ -30,3 +32,12 @@ class QuestionModelsTests(TestCase):
         time = timezone.now() - datetime.timedelta(hours=23, minutes=59)
         recent_question = Question(pub_date=time)
         self.assertIs(recent_question.was_published_recently(), True)
+
+    def create_question(question_text, days):
+        """
+        Create a question with the given `question_text` and published the
+        given number of `days` offset to now (negative for questions published
+        in the past, positive for questions that have yet to be published).
+        """
+        time = timezone.now() + datetime.timedelta(days=days)
+        return Question.objects.create(question_text=question_text, pub_date=time)
